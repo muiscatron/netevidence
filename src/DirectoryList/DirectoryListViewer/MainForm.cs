@@ -26,20 +26,27 @@ namespace DirectoryListViewer
             {
                 var path =  folderBrowserDialog1.SelectedPath;
 
+                label1.Text = path;
+
                 var processor = new Processor(new AppConfig());
 
                 var progressIndicator = new Progress<IFileInfo>(UpdateProgress);
 
                 await processor.ProcessFolderAsync(path, progressIndicator);
 
+
+
             }
 
 
         }
 
+        /// <summary>
+        /// This action is called by the progress bar
+        /// </summary>
+        /// <param name="value"></param>
         void UpdateProgress(IFileInfo value)
         {
-            Debug.WriteLine(value.FileName);
 
             DataGridViewRow row = new DataGridViewRow();
             row.CreateCells(gridFiles);

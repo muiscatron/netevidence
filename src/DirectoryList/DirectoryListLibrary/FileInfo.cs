@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace DirectoryListLibrary
 {
+    [Serializable]
     public class FileInfo : IFileInfo
     {
         public DateTime DateLastTouched
