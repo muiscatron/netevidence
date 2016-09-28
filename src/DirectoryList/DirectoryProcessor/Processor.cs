@@ -12,12 +12,12 @@ namespace DirectoryProcessor
     public class Processor
     {
 
+        private static int fileCount;
+
         public Processor(IConfig config)
         {
 
         }
-
-        //https://blogs.msdn.microsoft.com/dotnet/2012/06/06/async-in-4-5-enabling-progress-and-cancellation-in-async-apis/
 
         public async Task ProcessFolderAsync(string path, IProgress<IFileInfo> progress)
         {
@@ -34,48 +34,36 @@ namespace DirectoryProcessor
                 System.IO.FileInfo[] files = null;
                 System.IO.DirectoryInfo[] subDirs = null;
 
-                // First, process all the files directly under this folder
                 try
                 {
                     files = root.GetFiles("*.*");
                 }
-                // This is thrown if even one of the files requires permissions greater
-                // than the application provides.
-                catch (UnauthorizedAccessException e)
+                catch (UnauthorizedAccessException ex)
                 {
-                    // This code just writes out the message and continues to recurse.
-                    // You may decide to do something different here. For example, you
-                    // can try to elevate your privileges and access the file again.
-                    // log.Add(e.Message);
-                    Debug.WriteLine(e.Message);
+                    Debug.WriteLine(ex.Message);
                 }
 
-                catch (System.IO.DirectoryNotFoundException e)
+                catch (System.IO.DirectoryNotFoundException ex)
                 {
-                    Console.WriteLine(e.Message);
+                    Debug.WriteLine(ex.Message);
                 }
 
                 if (files != null)
                 {
                     foreach (System.IO.FileInfo fi in files)
                     {
-                        // In this example, we only access the existing FileInfo object. If we
-                        // want to open, delete or modify the file, then
-                        // a try-catch block is required here to handle the case
-                        // where the file has been deleted since the call to TraverseTree().
-                        Console.WriteLine(fi.FullName);
+                        fileCount++;
                         if (progress != null)
                         {
-                            progress.Report(new DirectoryListLibrary.FileInfo() { FileName = fi.Name, FilePath = fi.DirectoryName, Size = fi.Length, DateLastTouched = fi.LastAccessTime });
+                            // Use progress report to pass the file info back to the UI thread
+                            progress.Report(new DirectoryListLibrary.FileInfo() { Sequence = fileCount, FileName = fi.Name, FilePath = Path.GetDirectoryName(fi.DirectoryName) , Size = fi.Length, DateLastTouched = fi.LastAccessTime });
                         }
                     }
 
-                    // Now find all the subdirectories under this directory.
                     subDirs = root.GetDirectories();
 
                     foreach (System.IO.DirectoryInfo dirInfo in subDirs)
                     {
-                        // Resursive call for each subdirectory.
                         WalkDirectoryTree(dirInfo, progress);
                     }
                 }
