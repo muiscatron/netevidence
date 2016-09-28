@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Diagnostics;
 
 namespace DirectoryProcessor
 {
@@ -18,11 +19,17 @@ namespace DirectoryProcessor
 
         //https://blogs.msdn.microsoft.com/dotnet/2012/06/06/async-in-4-5-enabling-progress-and-cancellation-in-async-apis/
 
-        Task<IFileInfo> ProcessFolderAsync(string path, IProgress<IFileInfo> progress)
+        public async Task ProcessFolderAsync(string path, IProgress<IFileInfo> progress)
         {
-            return Task.Run<IFileInfo>(() =>
+            System.IO.DirectoryInfo root = new DirectoryInfo(path);
+
+            await Task.Run(() => WalkDirectoryTree(root, progress));
+        }
+
+
+        void WalkDirectoryTree(System.IO.DirectoryInfo root, IProgress<IFileInfo> progress)
+        {
             {
-                System.IO.DirectoryInfo root = new DirectoryInfo(path);
 
                 System.IO.FileInfo[] files = null;
                 System.IO.DirectoryInfo[] subDirs = null;
@@ -39,7 +46,8 @@ namespace DirectoryProcessor
                     // This code just writes out the message and continues to recurse.
                     // You may decide to do something different here. For example, you
                     // can try to elevate your privileges and access the file again.
-                    log.Add(e.Message);
+                    // log.Add(e.Message);
+                    Debug.WriteLine(e.Message);
                 }
 
                 catch (System.IO.DirectoryNotFoundException e)
@@ -68,20 +76,14 @@ namespace DirectoryProcessor
                     foreach (System.IO.DirectoryInfo dirInfo in subDirs)
                     {
                         // Resursive call for each subdirectory.
-                        WalkDirectoryTree(dirInfo);
+                        WalkDirectoryTree(dirInfo, progress);
                     }
                 }
 
             }
-                
-                
-
-            );
-        }
 
 
-        void WalkDirectoryTree(System.IO.DirectoryInfo root)
-        {
+
 
         }
 

@@ -10,54 +10,38 @@ namespace DirectoryListLibrary
     {
         public DateTime DateLastTouched
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            get;
 
-            set
-            {
-                throw new NotImplementedException();
-            }
+            set;
         }
 
         public string FileName
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            get;
 
-            set
-            {
-                throw new NotImplementedException();
-            }
+            set;
         }
 
         public string FilePath
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            get;
 
-            set
-            {
-                throw new NotImplementedException();
-            }
+            set;
         }
-
-        public int Size
+        public long Size
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+                get;
 
-            set
-            {
-                throw new NotImplementedException();
-            }
+                set;
         }
+
+        public int Sequence
+        {
+            get;
+
+            set;
+        }
+
+
     }
 }

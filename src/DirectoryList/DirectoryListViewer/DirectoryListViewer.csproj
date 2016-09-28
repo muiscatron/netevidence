@@ -79,6 +79,16 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DirectoryListLibrary\DirectoryListLibrary.csproj">
+      <Project>{4ff6da8d-8fa5-45bc-88cf-f3862ae90577}</Project>
+      <Name>DirectoryListLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DirectoryProcessor\DirectoryProcessor.csproj">
+      <Project>{2d023b9d-caf0-486e-8a8c-deda5ee441c6}</Project>
+      <Name>DirectoryProcessor</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

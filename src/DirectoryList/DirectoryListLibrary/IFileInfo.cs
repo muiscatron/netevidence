@@ -8,10 +8,10 @@ namespace DirectoryListLibrary
 {
     public interface IFileInfo
     {
-        int sequence { get; set; }
+        int Sequence { get; set; }
         string FileName { get; set; }
         string FilePath { get; set; }
-        int Size { get; set; }
+        long Size { get; set; }
         DateTime DateLastTouched { get; set; }
     }
 }
