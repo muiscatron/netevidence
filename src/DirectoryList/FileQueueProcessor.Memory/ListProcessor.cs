@@ -1,29 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using DirectoryListLibrary;
 
 namespace FileQueueProcessor.Memory
 {
     public class ListProcessor : IFileQueueProcessor
     {
-        private  Queue<IFileInfo> _fileList;
+        private readonly Queue<IFileDetails> _fileList;
 
 
         public ListProcessor()
         {
-            _fileList = new Queue<IFileInfo>();
+            _fileList = new Queue<IFileDetails>();
             
         }
 
-        public void Push(IFileInfo file)
+        public void Push(IFileDetails file)
         {
             _fileList.Enqueue(file);
         }
 
-        public IFileInfo Pull()
+        public IFileDetails Pull()
         {
             if (_fileList.Count != 0)
             {

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 using DirectoryListLibrary;
 
 namespace FileQueueProcessor.MSMQ
@@ -18,17 +14,17 @@ namespace FileQueueProcessor.MSMQ
         {
             _config = config;
             _messageQueue = new MessageQueue(_config.QueueName);
-            _messageQueue.Formatter = new XmlMessageFormatter(new Type[] { typeof(IFileInfo) });
+            _messageQueue.Formatter = new XmlMessageFormatter(new[] { typeof(IFileDetails) });
 
         }
 
 
-        public void Push(IFileInfo file)
+        public void Push(IFileDetails file)
         {
             throw new NotImplementedException();
         }
 
-        public IFileInfo Pull()
+        public IFileDetails Pull()
         {
             throw new NotImplementedException();
         }

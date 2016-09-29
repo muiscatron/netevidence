@@ -1,33 +1,26 @@
 ﻿using DirectoryListLibrary;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Diagnostics;
-using System.Messaging;
 
 namespace DirectoryProcessor
 {
     public class Processor
     {
 
-        private static int fileCount;
+        private static int _fileCount;
 
-        private IConfig _config;
+        private readonly IFileQueueProcessor _fileQueueProcessor;
 
-        private IFileQueueProcessor _fileQueueProcessor;
-
-        public Processor(IConfig config, IFileQueueProcessor fileQueueProcessor)
+        public Processor(IFileQueueProcessor fileQueueProcessor)
         {
-            _config = config;
             _fileQueueProcessor = fileQueueProcessor;
         }
 
-        public async Task ProcessFolderAsync(string path, IProgress<int> progress)
+        public async Task ProcessDirectoryAsync(string path, IProgress<int> progress)
         {
-            System.IO.DirectoryInfo root = new DirectoryInfo(path);
+            var root = new DirectoryInfo(path);
 
             await Task.Run(() =>
                 {
@@ -43,8 +36,7 @@ namespace DirectoryProcessor
         {
             {
 
-                System.IO.FileInfo[] files = null;
-                System.IO.DirectoryInfo[] subDirs = null;
+                FileInfo[] files = null;
 
                 try
                 {
@@ -62,21 +54,21 @@ namespace DirectoryProcessor
 
                 if (files != null)
                 {
-                    foreach (System.IO.FileInfo fi in files)
+                    foreach (FileInfo fi in files)
                     {
-                        fileCount++;
+                        _fileCount++;
                         if (progress != null)
                         {
-                            var info = new DirectoryListLibrary.FileInfo { Sequence = fileCount, FileName = fi.Name, FilePath = Path.GetDirectoryName(fi.DirectoryName) , Size = fi.Length, DateLastTouched = fi.LastAccessTime };
-                            progress.Report(fileCount);
+                            var info = new FileDetails { Sequence = _fileCount, FileName = fi.Name, FilePath = Path.GetDirectoryName(fi.DirectoryName) , Size = fi.Length, DateLastTouched = fi.LastAccessTime };
+                            progress.Report(_fileCount);
                             _fileQueueProcessor.Push(info);
 
                         }
                     }
 
-                    subDirs = root.GetDirectories();
+                    var subDirs = root.GetDirectories();
 
-                    foreach (System.IO.DirectoryInfo dirInfo in subDirs)
+                    foreach (var dirInfo in subDirs)
                     {
                         WalkDirectoryTree(dirInfo, progress);
                     }
@@ -90,21 +82,23 @@ namespace DirectoryProcessor
         }
 
 
-        public async Task PopulateFromQueue(IProgress<IFileInfo> progress)
+        public async Task PopulateFromQueueAsync(IProgress<IFileDetails> progress)
         {
+            // Run forever, pulling from the queue
             await Task.Run(() =>
             {
-                bool c = true;
 
-                while (c)
+                while (true)
                 {
                     var info = _fileQueueProcessor.Pull();
                     if (info != null)
                     {
-                        progress.Report(new DirectoryListLibrary.FileInfo() { Sequence = fileCount, FileName = info.FileName, FilePath = info.FilePath, Size = info.Size, DateLastTouched = info.DateLastTouched });
+                        // Pass back file detail item as a progress report
+                        progress.Report(new FileDetails() { Sequence = _fileCount, FileName = info.FileName, FilePath = info.FilePath, Size = info.Size, DateLastTouched = info.DateLastTouched });
                     }
                 }
 
+                // ReSharper disable once FunctionNeverReturns
             }
             );
 

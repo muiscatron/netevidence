@@ -42,9 +42,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppConfig.cs" />
-    <Compile Include="FileInfo.cs" />
+    <Compile Include="FileDetails.cs" />
     <Compile Include="IConfig.cs" />
-    <Compile Include="IFileInfo.cs" />
+    <Compile Include="IFileDetails.cs" />
     <Compile Include="IFileQueueProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

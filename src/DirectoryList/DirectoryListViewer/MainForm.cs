@@ -1,17 +1,10 @@
 ﻿using DirectoryListLibrary;
 using DirectoryProcessor;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using FileQueueProcessor.Memory;
-using FileQueueProcessor.MSMQ;
 
 namespace DirectoryListViewer
 {
@@ -29,19 +22,22 @@ namespace DirectoryListViewer
                 var path =  folderBrowserDialog1.SelectedPath;
 
                 label1.Text = path;
+                gridFiles.Rows.Clear();
 
                 var config = new AppConfig();
                 config.QueueName = "";
 
-                var processor = new Processor(config, new ListProcessor());
+                var processor = new Processor(new ListProcessor());
 
+                
                 var discoverFilesProgress = new Progress<int>(DiscoverFilesProgress);
+                
+                // Step 1 - this task 
+                Task discoverFiles = processor.ProcessDirectoryAsync(path, discoverFilesProgress);
 
-                Task discoverFiles = processor.ProcessFolderAsync(path, discoverFilesProgress);
+                var populateGridProgress = new Progress<IFileDetails>(PopulateGridProgress);
 
-                var populateGridProgress = new Progress<IFileInfo>(UpdateGridProgress);
-
-                Task populateGrid = processor.PopulateFromQueue(populateGridProgress);
+                Task populateGrid = processor.PopulateFromQueueAsync(populateGridProgress);
 
                 await Task.WhenAll(discoverFiles, populateGrid);
 
@@ -54,7 +50,7 @@ namespace DirectoryListViewer
         /// This action is called by the progress bar
         /// </summary>
         /// <param name="value"></param>
-        void UpdateGridProgress(IFileInfo value)
+        void PopulateGridProgress(IFileDetails value)
         {
 
             DataGridViewRow row = new DataGridViewRow();
