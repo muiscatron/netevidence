@@ -58,7 +58,7 @@ namespace DirectoryListViewer
             row.Cells[0].Value = value.Sequence;
             row.Cells[1].Value = value.FileName;
             row.Cells[2].Value = value.FilePath;
-            row.Cells[3].Value = string.Format(@"{0:#,##0}", value.Size);
+            row.Cells[3].Value = string.Format(@"{0:#,##0}", value.FileSize);
             row.Cells[4].Value = string.Format(@"{0:f}", value.DateLastTouched);
             gridFiles.Rows.Add(row);
 

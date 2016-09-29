@@ -35,8 +35,8 @@
             this.gridFiles = new System.Windows.Forms.DataGridView();
             this.Sequence = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Filename = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Path = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Size = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.FilePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.FileSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.LastTouchedDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.gridFiles)).BeginInit();
             this.SuspendLayout();
@@ -76,8 +76,8 @@
             this.gridFiles.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Sequence,
             this.Filename,
-            this.Path,
-            this.Size,
+            this.FilePath,
+            this.FileSize,
             this.LastTouchedDate});
             this.gridFiles.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.gridFiles.Location = new System.Drawing.Point(51, 170);
@@ -102,17 +102,17 @@
             this.Filename.Name = "Filename";
             this.Filename.ReadOnly = true;
             // 
-            // Path
+            // FilePath
             // 
-            this.Path.HeaderText = "Path";
-            this.Path.Name = "Path";
-            this.Path.ReadOnly = true;
+            this.FilePath.HeaderText = "Path";
+            this.FilePath.Name = "FilePath";
+            this.FilePath.ReadOnly = true;
             // 
-            // Size
+            // FileSize
             // 
-            this.Size.HeaderText = "Size";
-            this.Size.Name = "Size";
-            this.Size.ReadOnly = true;
+            this.FileSize.HeaderText = "Size";
+            this.FileSize.Name = "FileSize";
+            this.FileSize.ReadOnly = true;
             // 
             // LastTouchedDate
             // 
@@ -146,8 +146,8 @@
         private System.Windows.Forms.DataGridView gridFiles;
         private System.Windows.Forms.DataGridViewTextBoxColumn Sequence;
         private System.Windows.Forms.DataGridViewTextBoxColumn Filename;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Path;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Size;
+        private System.Windows.Forms.DataGridViewTextBoxColumn FilePath;
+        private System.Windows.Forms.DataGridViewTextBoxColumn FileSize;
         private System.Windows.Forms.DataGridViewTextBoxColumn LastTouchedDate;
     }
 }

@@ -25,7 +25,7 @@ namespace DirectoryListLibrary
 
             set;
         }
-        public long Size
+        public long FileSize
         {
                 get;
 
