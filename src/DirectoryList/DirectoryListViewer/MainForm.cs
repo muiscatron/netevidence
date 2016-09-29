@@ -10,6 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using FileQueueProcessor.Memory;
+using FileQueueProcessor.MSMQ;
 
 namespace DirectoryListViewer
 {
@@ -28,13 +30,20 @@ namespace DirectoryListViewer
 
                 label1.Text = path;
 
-                var processor = new Processor(new AppConfig());
+                var config = new AppConfig();
+                config.QueueName = "";
 
-                var progressIndicator = new Progress<IFileInfo>(UpdateProgress);
+                var processor = new Processor(config, new ListProcessor());
 
-                await processor.ProcessFolderAsync(path, progressIndicator);
+                var discoverFilesProgress = new Progress<int>(DiscoverFilesProgress);
 
+                Task discoverFiles = processor.ProcessFolderAsync(path, discoverFilesProgress);
 
+                var populateGridProgress = new Progress<IFileInfo>(UpdateGridProgress);
+
+                Task populateGrid = processor.PopulateFromQueue(populateGridProgress);
+
+                await Task.WhenAll(discoverFiles, populateGrid);
 
             }
 
@@ -45,7 +54,7 @@ namespace DirectoryListViewer
         /// This action is called by the progress bar
         /// </summary>
         /// <param name="value"></param>
-        void UpdateProgress(IFileInfo value)
+        void UpdateGridProgress(IFileInfo value)
         {
 
             DataGridViewRow row = new DataGridViewRow();
@@ -58,6 +67,13 @@ namespace DirectoryListViewer
             gridFiles.Rows.Add(row);
 
         }
+
+
+        void DiscoverFilesProgress(int value)
+        {
+            Debug.WriteLine(@"Found file {0}", value);
+        }
+
 
     }
 }

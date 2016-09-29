@@ -4,14 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4FF6DA8D-8FA5-45BC-88CF-F3862AE90577}</ProjectGuid>
+    <ProjectGuid>{FABBAFEA-BBA0-4CDA-8FB7-381BC7094920}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DirectoryListLibrary</RootNamespace>
-    <AssemblyName>DirectoryListLibrary</AssemblyName>
+    <RootNamespace>FileQueueProcessor.MSMQ</RootNamespace>
+    <AssemblyName>FileQueueProcessor.MSMQ</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,6 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Messaging" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,12 +41,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppConfig.cs" />
-    <Compile Include="FileInfo.cs" />
-    <Compile Include="IConfig.cs" />
-    <Compile Include="IFileInfo.cs" />
-    <Compile Include="IFileQueueProcessor.cs" />
+    <Compile Include="MsmqProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DirectoryListLibrary\DirectoryListLibrary.csproj">
+      <Project>{4ff6da8d-8fa5-45bc-88cf-f3862ae90577}</Project>
+      <Name>DirectoryListLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

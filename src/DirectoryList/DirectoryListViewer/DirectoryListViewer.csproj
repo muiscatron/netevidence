@@ -88,6 +88,14 @@
       <Project>{2d023b9d-caf0-486e-8a8c-deda5ee441c6}</Project>
       <Name>DirectoryProcessor</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FileQueueProcessor.Memory\FileQueueProcessor.Memory.csproj">
+      <Project>{c4203642-324c-4681-bd12-aee83f607614}</Project>
+      <Name>FileQueueProcessor.Memory</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FileQueueProcessor.MSMQ\FileQueueProcessor.MSMQ.csproj">
+      <Project>{fabbafea-bba0-4cda-8fb7-381bc7094920}</Project>
+      <Name>FileQueueProcessor.MSMQ</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

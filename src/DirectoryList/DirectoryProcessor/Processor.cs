@@ -17,12 +17,15 @@ namespace DirectoryProcessor
 
         private IConfig _config;
 
-        public Processor(IConfig config)
+        private IFileQueueProcessor _fileQueueProcessor;
+
+        public Processor(IConfig config, IFileQueueProcessor fileQueueProcessor)
         {
             _config = config;
+            _fileQueueProcessor = fileQueueProcessor;
         }
 
-        public async Task ProcessFolderAsync(string path, IProgress<IFileInfo> progress)
+        public async Task ProcessFolderAsync(string path, IProgress<int> progress)
         {
             System.IO.DirectoryInfo root = new DirectoryInfo(path);
 
@@ -36,7 +39,7 @@ namespace DirectoryProcessor
         }
 
 
-        void WalkDirectoryTree(DirectoryInfo root, IProgress<IFileInfo> progress)
+        void WalkDirectoryTree(DirectoryInfo root, IProgress<int> progress)
         {
             {
 
@@ -64,8 +67,10 @@ namespace DirectoryProcessor
                         fileCount++;
                         if (progress != null)
                         {
-                            // Use progress report to pass the file info back to the UI thread
-                            progress.Report(new DirectoryListLibrary.FileInfo() { Sequence = fileCount, FileName = fi.Name, FilePath = Path.GetDirectoryName(fi.DirectoryName) , Size = fi.Length, DateLastTouched = fi.LastAccessTime });
+                            var info = new DirectoryListLibrary.FileInfo { Sequence = fileCount, FileName = fi.Name, FilePath = Path.GetDirectoryName(fi.DirectoryName) , Size = fi.Length, DateLastTouched = fi.LastAccessTime };
+                            progress.Report(fileCount);
+                            _fileQueueProcessor.Push(info);
+
                         }
                     }
 
@@ -89,19 +94,19 @@ namespace DirectoryProcessor
         {
             await Task.Run(() =>
             {
-                MessageQueue messageQueue = new MessageQueue(_config.QueueName);
-                messageQueue.Formatter = new XmlMessageFormatter(new Type[] { typeof(IFileInfo) });
-                Message[] messages = messageQueue.GetAllMessages();
+                bool c = true;
 
-                foreach (Message message in messages)
+                while (c)
                 {
-                    var info = (IFileInfo)message.Body;
-                    progress.Report(new DirectoryListLibrary.FileInfo() { Sequence = fileCount, FileName = info.FileName, FilePath = info.FilePath, Size = info.Size, DateLastTouched = info.DateLastTouched});
+                    var info = _fileQueueProcessor.Pull();
+                    if (info != null)
+                    {
+                        progress.Report(new DirectoryListLibrary.FileInfo() { Sequence = fileCount, FileName = info.FileName, FilePath = info.FilePath, Size = info.Size, DateLastTouched = info.DateLastTouched });
+                    }
                 }
-                // after all processing, delete all the messages
-                messageQueue.Purge();
+
             }
-);
+            );
 
         }
 

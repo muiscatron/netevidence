@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace DirectoryListLibrary
 {
-    public interface IFileQueue
+    public interface IFileQueueProcessor
     {
         void Push(IFileInfo file);
-        IFileInfo Pop();
+        IFileInfo Pull();
     }
 }
