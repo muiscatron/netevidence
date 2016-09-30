@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Messaging;
 using DirectoryListLibrary;
 
@@ -13,20 +14,58 @@ namespace FileQueueProcessor.MSMQ
         public MsmqProcessor(IConfig config)
         {
             _config = config;
-            _messageQueue = new MessageQueue(_config.QueueName);
-            _messageQueue.Formatter = new XmlMessageFormatter(new[] { typeof(IFileDetails) });
+
+            try
+            {
+                if (MessageQueue.Exists(_config.QueueName))
+                {
+                    _messageQueue = new MessageQueue(_config.QueueName);
+                }
+                else
+                {
+                    _messageQueue = MessageQueue.Create(_config.QueueName);
+                }
+                _messageQueue.Formatter = new XmlMessageFormatter(new[] { typeof(FileDetails) });
+                _messageQueue.Purge();
+
+            }
+            catch (InvalidOperationException ex)
+            {
+                Debug.WriteLine(ex.Message);
+                throw new Exception("Message Queuing is not installed");
+            }
 
         }
 
 
         public void Push(IFileDetails file)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var msg = new Message();
+                msg.Label = file.FileName;
+                msg.Body = file;
+                _messageQueue.Send(msg);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(@"Error when sending to queue : {0}", ex.Message);
+            }
         }
 
         public IFileDetails Pull()
         {
-            throw new NotImplementedException();
+            try
+            {
+                FileDetails item = (FileDetails)_messageQueue.Receive().Body;
+                return item;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(@"Error when receiving from queue : {0}", ex.Message);
+                return null;
+
+            }
         }
     }
 }

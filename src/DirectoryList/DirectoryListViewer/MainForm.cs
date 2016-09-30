@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using FileQueueProcessor.Memory;
+using FileQueueProcessor.MSMQ;
 
 namespace DirectoryListViewer
 {
@@ -17,31 +18,40 @@ namespace DirectoryListViewer
 
         private async void btnSelectFolder_Click(object sender, EventArgs e)
         {
-            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+            try
             {
-                var path =  folderBrowserDialog1.SelectedPath;
+                if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    var path = folderBrowserDialog1.SelectedPath;
 
-                label1.Text = path;
-                gridFiles.Rows.Clear();
+                    label1.Text = path;
+                    gridFiles.Rows.Clear();
 
-                var config = new AppConfig();
-                config.QueueName = "";
+                    var config = new AppConfig();
+                    config.QueueName = @".\Private$\DirectoryList";
 
-                var processor = new Processor(new ListProcessor());
+                    var processor = new Processor(new MsmqProcessor(config));
 
-                
-                var discoverFilesProgress = new Progress<int>(DiscoverFilesProgress);
-                
-                // Step 1 - this task 
-                Task discoverFiles = processor.ProcessDirectoryAsync(path, discoverFilesProgress);
 
-                var populateGridProgress = new Progress<IFileDetails>(PopulateGridProgress);
+                    var discoverFilesProgress = new Progress<int>(DiscoverFilesProgress);
 
-                Task populateGrid = processor.PopulateFromQueueAsync(populateGridProgress);
+                    // Step 1 - this task 
+                    Task discoverFiles = processor.ProcessDirectoryAsync(path, discoverFilesProgress);
 
-                await Task.WhenAll(discoverFiles, populateGrid);
+                    var populateGridProgress = new Progress<IFileDetails>(PopulateGridProgress);
+
+                    Task populateGrid = processor.PopulateFromQueueAsync(populateGridProgress);
+
+                    await Task.WhenAll(discoverFiles, populateGrid);
+
+                }
 
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
 
 
         }
@@ -53,6 +63,7 @@ namespace DirectoryListViewer
         void PopulateGridProgress(IFileDetails value)
         {
 
+            Debug.WriteLine(@"Populating grid with file {0}; {1}", value.Sequence, value.FileName);
             DataGridViewRow row = new DataGridViewRow();
             row.CreateCells(gridFiles);
             row.Cells[0].Value = value.Sequence;
@@ -70,6 +81,9 @@ namespace DirectoryListViewer
             Debug.WriteLine(@"Found file {0}", value);
         }
 
-
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

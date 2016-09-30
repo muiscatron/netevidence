@@ -62,6 +62,7 @@ namespace DirectoryProcessor
                             var info = new FileDetails { Sequence = _fileCount, FileName = fi.Name, FilePath = Path.GetDirectoryName(fi.DirectoryName) , FileSize = fi.Length, DateLastTouched = fi.LastAccessTime };
                             progress.Report(_fileCount);
                             _fileQueueProcessor.Push(info);
+                            Debug.WriteLine("Pushing item to queue {0}", _fileCount);
 
                         }
                     }
@@ -94,7 +95,9 @@ namespace DirectoryProcessor
                     if (info != null)
                     {
                         // Pass back file detail item as a progress report
+                        // Would have liked to explore using Rx to do this
                         progress.Report(new FileDetails() { Sequence = _fileCount, FileName = info.FileName, FilePath = info.FilePath, FileSize = info.FileSize, DateLastTouched = info.DateLastTouched });
+                        Debug.WriteLine("Passing back progress item");
                     }
                 }
 
