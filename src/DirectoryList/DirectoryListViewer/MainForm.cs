@@ -29,7 +29,7 @@ namespace DirectoryListViewer
 
                     var config = new AppConfig();
                     config.QueueName = @".\Private$\DirectoryList";
-                    config.PullBatchSize = 20;
+                    config.PullBatchSize = 100;
                     config.IdleTimeout = 5;
 
                     var processor = new Processor(new MsmqProcessor(config), config);
@@ -39,6 +39,9 @@ namespace DirectoryListViewer
                     Task discoverFiles = processor.ProcessDirectoryAsync(path, null);
 
                     var populateGridProgress = new Progress<List<IFileDetails>>(PopulateGridProgress);
+
+                    populateGridProgress.ProgressChanged += PopulateGridProgress_ProgressChanged;
+
 
                     Task populateGrid = processor.PopulateFromQueueAsync(populateGridProgress);
 
@@ -56,13 +59,8 @@ namespace DirectoryListViewer
 
         }
 
-        /// <summary>
-        /// This action is called by the progress bar
-        /// </summary>
-        /// <param name="value"></param>
-        void PopulateGridProgress(List<IFileDetails> filesBuffer)
+        private void PopulateGridProgress_ProgressChanged(object sender, List<IFileDetails> filesBuffer)
         {
-
             Debug.WriteLine(@"Populating grid with file buffer data; {0}", filesBuffer.Count);
 
 
@@ -78,6 +76,30 @@ namespace DirectoryListViewer
                 row.Cells[4].Value = string.Format(@"{0:f}", fileItem.DateLastTouched);
                 gridFiles.Rows.Add(row);
             }
+        }
+
+        /// <summary>
+        /// This action is called by the progress bar
+        /// </summary>
+        /// <param name="value"></param>
+        void PopulateGridProgress(List<IFileDetails> filesBuffer)
+        {
+
+            //Debug.WriteLine(@"Populating grid with file buffer data; {0}", filesBuffer.Count);
+
+
+            //foreach (FileDetails fileItem in filesBuffer)
+            //{
+
+            //    DataGridViewRow row = new DataGridViewRow();
+            //    row.CreateCells(gridFiles);
+            //    row.Cells[0].Value = fileItem.Sequence;
+            //    row.Cells[1].Value = fileItem.FileName;
+            //    row.Cells[2].Value = fileItem.FilePath;
+            //    row.Cells[3].Value = string.Format(@"{0:#,##0}", fileItem.FileSize);
+            //    row.Cells[4].Value = string.Format(@"{0:f}", fileItem.DateLastTouched);
+            //    gridFiles.Rows.Add(row);
+            //}
         }
 
 
