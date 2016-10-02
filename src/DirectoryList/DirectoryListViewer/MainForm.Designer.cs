@@ -33,11 +33,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.gridFiles = new System.Windows.Forms.DataGridView();
-            this.Sequence = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Filename = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.FilePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.FileSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.LastTouchedDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnClose = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridFiles)).BeginInit();
             this.SuspendLayout();
@@ -79,12 +74,6 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gridFiles.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridFiles.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Sequence,
-            this.Filename,
-            this.FilePath,
-            this.FileSize,
-            this.LastTouchedDate});
             this.gridFiles.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.gridFiles.Location = new System.Drawing.Point(12, 98);
             this.gridFiles.Name = "gridFiles";
@@ -94,37 +83,6 @@
             this.gridFiles.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridFiles.Size = new System.Drawing.Size(519, 385);
             this.gridFiles.TabIndex = 3;
-            // 
-            // Sequence
-            // 
-            this.Sequence.HeaderText = "Seq";
-            this.Sequence.Name = "Sequence";
-            this.Sequence.ReadOnly = true;
-            this.Sequence.Width = 50;
-            // 
-            // Filename
-            // 
-            this.Filename.HeaderText = "Filename";
-            this.Filename.Name = "Filename";
-            this.Filename.ReadOnly = true;
-            // 
-            // FilePath
-            // 
-            this.FilePath.HeaderText = "Path";
-            this.FilePath.Name = "FilePath";
-            this.FilePath.ReadOnly = true;
-            // 
-            // FileSize
-            // 
-            this.FileSize.HeaderText = "Size";
-            this.FileSize.Name = "FileSize";
-            this.FileSize.ReadOnly = true;
-            // 
-            // LastTouchedDate
-            // 
-            this.LastTouchedDate.HeaderText = "Date";
-            this.LastTouchedDate.Name = "LastTouchedDate";
-            this.LastTouchedDate.ReadOnly = true;
             // 
             // btnClose
             // 
@@ -162,11 +120,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.DataGridView gridFiles;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Sequence;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Filename;
-        private System.Windows.Forms.DataGridViewTextBoxColumn FilePath;
-        private System.Windows.Forms.DataGridViewTextBoxColumn FileSize;
-        private System.Windows.Forms.DataGridViewTextBoxColumn LastTouchedDate;
         private System.Windows.Forms.Button btnClose;
     }
 }

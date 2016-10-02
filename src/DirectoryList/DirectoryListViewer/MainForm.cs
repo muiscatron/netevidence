@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using FileQueueProcessor.Memory;
 using FileQueueProcessor.MSMQ;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace DirectoryListViewer
 {
@@ -16,16 +18,28 @@ namespace DirectoryListViewer
             InitializeComponent();
         }
 
+        private List<IFileDetails> _fileList = new List<IFileDetails>();
+        private BindingList<IFileDetails> _bindingList;
+        private BindingSource _source;
+        
+
+
         private async void btnSelectFolder_Click(object sender, EventArgs e)
         {
             try
             {
+                _bindingList = new BindingList<IFileDetails>(_fileList);
+                _source = new BindingSource(_bindingList, null);
+                gridFiles.DataSource = _source;
+
+                gridFiles.Refresh();
+
                 if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
                 {
                     var path = folderBrowserDialog1.SelectedPath;
 
                     label1.Text = path;
-                    gridFiles.Rows.Clear();
+                    
 
                     var config = new AppConfig();
                     config.QueueName = @".\Private$\DirectoryList";
@@ -64,14 +78,9 @@ namespace DirectoryListViewer
         {
 
             Debug.WriteLine(@"Populating grid with file {0}; {1}", value.Sequence, value.FileName);
-            DataGridViewRow row = new DataGridViewRow();
-            row.CreateCells(gridFiles);
-            row.Cells[0].Value = value.Sequence;
-            row.Cells[1].Value = value.FileName;
-            row.Cells[2].Value = value.FilePath;
-            row.Cells[3].Value = string.Format(@"{0:#,##0}", value.FileSize);
-            row.Cells[4].Value = string.Format(@"{0:f}", value.DateLastTouched);
-            gridFiles.Rows.Add(row);
+            _fileList.Add(value);
+            gridFiles.DataSource = _source;
+            
 
         }
 
