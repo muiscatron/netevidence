@@ -29,8 +29,15 @@ namespace DirectoryListViewer
 
                     var config = new AppConfig();
                     config.QueueName = @".\Private$\DirectoryList";
+                    config.IdleTimeout = 5;
 
-                    var processor = new Processor(new MsmqProcessor(config));
+                    foreach (DataGridViewColumn c in gridFiles.Columns)
+                    {
+                        c.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+                    }
+
+
+                    var processor = new Processor(new MsmqProcessor(config), config);
 
 
                     var discoverFilesProgress = new Progress<int>(DiscoverFilesProgress);

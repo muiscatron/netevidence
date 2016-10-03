@@ -11,11 +11,14 @@ namespace DirectoryProcessor
 
         private static int _fileCount;
 
+        private IConfig _config;
+
         private readonly IFileQueueProcessor _fileQueueProcessor;
 
-        public Processor(IFileQueueProcessor fileQueueProcessor)
+        public Processor(IFileQueueProcessor fileQueueProcessor, IConfig config)
         {
             _fileQueueProcessor = fileQueueProcessor;
+            _config = config;
         }
 
         public async Task ProcessDirectoryAsync(string path, IProgress<int> progress)
@@ -89,15 +92,28 @@ namespace DirectoryProcessor
             await Task.Run(() =>
             {
 
+                DateTime lastFileReceived = DateTime.Now;
+
+
                 while (true)
                 {
                     var info = _fileQueueProcessor.Pull();
                     if (info != null)
                     {
-                        // Pass back file detail item as a progress report
-                        // Would have liked to explore using Rx to do this
-                        progress.Report(new FileDetails() { Sequence = _fileCount, FileName = info.FileName, FilePath = info.FilePath, FileSize = info.FileSize, DateLastTouched = info.DateLastTouched });
-                        Debug.WriteLine("Passing back progress item");
+                        lastFileReceived = DateTime.Now;
+                        var fileDetails = new FileDetails() { Sequence = info.Sequence, FileName = info.FileName, FilePath = info.FilePath, FileSize = info.FileSize, DateLastTouched = info.DateLastTouched };
+
+                        progress.Report(fileDetails);
+
+                        Debug.WriteLine("Passing back progress item {0}; {1}", info.Sequence, info.FileName);
+                    }
+                    else
+                    {
+                        if (DateTime.Now > lastFileReceived.AddSeconds(_config.IdleTimeout))
+                        {
+                            Debug.WriteLine(@"Timed out - no more files");
+                            break;
+                        }
                     }
                 }
 
