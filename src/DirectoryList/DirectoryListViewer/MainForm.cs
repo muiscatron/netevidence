@@ -25,7 +25,8 @@ namespace DirectoryListViewer
                     var path = folderBrowserDialog1.SelectedPath;
 
                     label1.Text = path;
-                    listFiles.Clear();
+
+                    listFiles.Items.Clear();
 
                     var config = new AppConfig();
                     config.QueueName = @".\Private$\DirectoryList";
@@ -75,7 +76,9 @@ namespace DirectoryListViewer
             columnData[4] = string.Format(@"{0:f}", value.DateLastTouched);
 
             ListViewItem item = new ListViewItem(columnData);
+            listFiles.BeginUpdate();
             listFiles.Items.Add(item);
+            listFiles.EndUpdate();
 
         }
 

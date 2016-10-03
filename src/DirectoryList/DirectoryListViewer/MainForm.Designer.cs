@@ -93,10 +93,38 @@
             this.LastTouchedDate});
             this.listFiles.FullRowSelect = true;
             this.listFiles.Location = new System.Drawing.Point(12, 91);
+            this.listFiles.MultiSelect = false;
             this.listFiles.Name = "listFiles";
             this.listFiles.Size = new System.Drawing.Size(519, 394);
             this.listFiles.TabIndex = 5;
             this.listFiles.UseCompatibleStateImageBehavior = false;
+            this.listFiles.View = System.Windows.Forms.View.Details;
+            // 
+            // Seq
+            // 
+            this.Seq.Text = "Seq";
+            this.Seq.Width = 45;
+            // 
+            // FileName
+            // 
+            this.FileName.Text = "Filename";
+            this.FileName.Width = 169;
+            // 
+            // FilePath
+            // 
+            this.FilePath.Text = "Path";
+            this.FilePath.Width = 131;
+            // 
+            // FileSize
+            // 
+            this.FileSize.Text = "Size";
+            this.FileSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.FileSize.Width = 63;
+            // 
+            // LastTouchedDate
+            // 
+            this.LastTouchedDate.Text = "Date";
+            this.LastTouchedDate.Width = 96;
             // 
             // MainForm
             // 
