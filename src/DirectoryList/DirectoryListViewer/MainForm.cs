@@ -70,7 +70,6 @@ namespace DirectoryListViewer
         void PopulateGridProgress(IFileDetails value)
         {
 
-            Debug.WriteLine(@"Populating grid with file {0}; {1}", value.Sequence, value.FileName);
             DataGridViewRow row = new DataGridViewRow();
             row.CreateCells(gridFiles);
             row.Cells[0].Value = value.Sequence;
@@ -85,7 +84,6 @@ namespace DirectoryListViewer
 
         void DiscoverFilesProgress(int value)
         {
-            Debug.WriteLine(@"Found file {0}", value);
         }
 
         private void btnClose_Click(object sender, EventArgs e)

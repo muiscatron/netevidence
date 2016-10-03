@@ -65,7 +65,6 @@ namespace DirectoryProcessor
                             var info = new FileDetails { Sequence = _fileCount, FileName = fi.Name, FilePath = Path.GetDirectoryName(fi.DirectoryName) , FileSize = fi.Length, DateLastTouched = fi.LastAccessTime };
                             progress.Report(_fileCount);
                             _fileQueueProcessor.Push(info);
-                            Debug.WriteLine("Pushing item to queue {0}", _fileCount);
 
                         }
                     }
@@ -98,6 +97,7 @@ namespace DirectoryProcessor
                 while (true)
                 {
                     var info = _fileQueueProcessor.Pull();
+
                     if (info != null)
                     {
                         lastFileReceived = DateTime.Now;
@@ -105,15 +105,17 @@ namespace DirectoryProcessor
 
                         progress.Report(fileDetails);
 
-                        Debug.WriteLine("Passing back progress item {0}; {1}", info.Sequence, info.FileName);
                     }
+
                     else
                     {
+                        
                         if (DateTime.Now > lastFileReceived.AddSeconds(_config.IdleTimeout))
                         {
-                            Debug.WriteLine(@"Timed out - no more files");
                             break;
                         }
+                        
+
                     }
                 }
 
