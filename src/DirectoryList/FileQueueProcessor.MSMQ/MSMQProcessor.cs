@@ -26,7 +26,6 @@ namespace FileQueueProcessor.MSMQ
                     _messageQueue = MessageQueue.Create(_config.QueueName);
                 }
                 _messageQueue.Formatter = new XmlMessageFormatter(new[] { typeof(FileDetails) });
-                _messageQueue.Purge();
 
             }
             catch (InvalidOperationException ex)
@@ -35,6 +34,12 @@ namespace FileQueueProcessor.MSMQ
                 throw new Exception("Message Queuing is not installed");
             }
 
+        }
+
+
+        public void Clear()
+        {
+            _messageQueue.Purge();
         }
 
 

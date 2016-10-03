@@ -39,6 +39,8 @@
             this.FileSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.LastTouchedDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnClose = new System.Windows.Forms.Button();
+            this.btnLoad = new System.Windows.Forms.Button();
+            this.btnScan = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridFiles)).BeginInit();
             this.SuspendLayout();
             // 
@@ -137,11 +139,33 @@
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
+            // btnLoad
+            // 
+            this.btnLoad.Location = new System.Drawing.Point(435, 12);
+            this.btnLoad.Name = "btnLoad";
+            this.btnLoad.Size = new System.Drawing.Size(96, 23);
+            this.btnLoad.TabIndex = 5;
+            this.btnLoad.Text = "Load";
+            this.btnLoad.UseVisualStyleBackColor = true;
+            this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
+            // 
+            // btnScan
+            // 
+            this.btnScan.Location = new System.Drawing.Point(333, 12);
+            this.btnScan.Name = "btnScan";
+            this.btnScan.Size = new System.Drawing.Size(96, 23);
+            this.btnScan.TabIndex = 6;
+            this.btnScan.Text = "Scan";
+            this.btnScan.UseVisualStyleBackColor = true;
+            this.btnScan.Click += new System.EventHandler(this.btnScan_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(546, 537);
+            this.Controls.Add(this.btnScan);
+            this.Controls.Add(this.btnLoad);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.gridFiles);
             this.Controls.Add(this.progressBar1);
@@ -168,6 +192,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn FileSize;
         private System.Windows.Forms.DataGridViewTextBoxColumn LastTouchedDate;
         private System.Windows.Forms.Button btnClose;
+        private System.Windows.Forms.Button btnLoad;
+        private System.Windows.Forms.Button btnScan;
     }
 }
 

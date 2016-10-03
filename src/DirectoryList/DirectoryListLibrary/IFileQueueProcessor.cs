@@ -4,5 +4,7 @@
     {
         void Push(IFileDetails file);
         IFileDetails Pull();
+
+        void Clear();
     }
 }

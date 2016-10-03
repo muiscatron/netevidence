@@ -24,6 +24,7 @@ namespace DirectoryProcessor
         public async Task ProcessDirectoryAsync(string path, IProgress<int> progress)
         {
             var root = new DirectoryInfo(path);
+            _fileQueueProcessor.Clear();
 
             await Task.Run(() =>
                 {

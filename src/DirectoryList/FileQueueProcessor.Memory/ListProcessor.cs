@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using DirectoryListLibrary;
 
 namespace FileQueueProcessor.Memory
@@ -28,6 +29,11 @@ namespace FileQueueProcessor.Memory
             }
             return null;
 
+        }
+
+        public void Clear()
+        {
+            _fileList.Clear();
         }
     }
 }
