@@ -27,7 +27,6 @@ namespace DirectoryProcessor
 
             await Task.Run(() =>
                 {
-                    //TODO: somehow get total number of files to allow for progress bar
 
                     WalkDirectoryTree(root, progress);
                 }

@@ -1,16 +1,16 @@
 ﻿using DirectoryListLibrary;
 using DirectoryProcessor;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using FileQueueProcessor.Memory;
 using FileQueueProcessor.MSMQ;
 
 namespace DirectoryListViewer
 {
     public partial class MainForm : Form
     {
+        private int _discoveredFileCount = 0;
+
         public MainForm()
         {
             InitializeComponent();
@@ -22,27 +22,27 @@ namespace DirectoryListViewer
             {
                 if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
                 {
+
                     var path = folderBrowserDialog1.SelectedPath;
 
                     label1.Text = path;
                     gridFiles.Rows.Clear();
+                    progressFiles.Value = 0;
 
                     var config = new AppConfig();
                     config.QueueName = @".\Private$\DirectoryList";
                     config.IdleTimeout = 5;
 
+                    // Prevent auto resizing which should improve performance of grid
                     foreach (DataGridViewColumn c in gridFiles.Columns)
                     {
                         c.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
                     }
 
-
                     var processor = new Processor(new MsmqProcessor(config), config);
-
 
                     var discoverFilesProgress = new Progress<int>(DiscoverFilesProgress);
 
-                    // Step 1 - this task 
                     Task discoverFiles = processor.ProcessDirectoryAsync(path, discoverFilesProgress);
 
                     var populateGridProgress = new Progress<IFileDetails>(PopulateGridProgress);
@@ -51,6 +51,7 @@ namespace DirectoryListViewer
 
                     await Task.WhenAll(discoverFiles, populateGrid);
 
+
                 }
 
             }
@@ -58,17 +59,13 @@ namespace DirectoryListViewer
             {
                 MessageBox.Show(ex.Message);
             }
-
-
+            
 
         }
 
-        /// <summary>
-        /// This action is called by the progress bar
-        /// </summary>
-        /// <param name="value"></param>
         void PopulateGridProgress(IFileDetails value)
         {
+            progressFiles.Value = (value.Sequence/_discoveredFileCount)*100;
 
             DataGridViewRow row = new DataGridViewRow();
             row.CreateCells(gridFiles);
@@ -84,11 +81,12 @@ namespace DirectoryListViewer
 
         void DiscoverFilesProgress(int value)
         {
+            _discoveredFileCount = value;
         }
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
     }
 }
