@@ -63,7 +63,7 @@ namespace DirectoryProcessor
                         _fileCount++;
                         if (progress != null)
                         {
-                            var info = new FileDetails { Sequence = _fileCount, FileName = fi.Name, FilePath = Path.GetDirectoryName(fi.DirectoryName) , FileSize = fi.Length, DateLastTouched = fi.LastAccessTime };
+                            var info = new FileDetails { Sequence = _fileCount, FileName = fi.Name, FilePath = fi.DirectoryName, FileSize = fi.Length, DateLastTouched = fi.LastAccessTime };
                             progress.Report(_fileCount);
                             _fileQueueProcessor.Push(info);
 
