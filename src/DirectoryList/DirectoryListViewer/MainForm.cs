@@ -4,7 +4,7 @@ using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Collections.Generic;
+using FileQueueProcessor.Memory;
 using FileQueueProcessor.MSMQ;
 
 namespace DirectoryListViewer
@@ -32,17 +32,24 @@ namespace DirectoryListViewer
                     config.PullBatchSize = 20;
                     config.IdleTimeout = 5;
 
+                    foreach (DataGridViewColumn c in gridFiles.Columns)
+                    {
+                        c.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+                    }
+
+
                     var processor = new Processor(new MsmqProcessor(config), config);
 
 
+                    var discoverFilesProgress = new Progress<int>(DiscoverFilesProgress);
                     // Step 1 - this task 
-                    Task discoverFiles = processor.ProcessDirectoryAsync(path, null);
+                    Task discoverFiles = processor.ProcessDirectoryAsync(path, discoverFilesProgress);
 
-                    var populateGridProgress = new Progress<List<IFileDetails>>(PopulateGridProgress);
+                    var populateGridProgress = new Progress<IFileDetails>(PopulateGridProgress);
 
                     Task populateGrid = processor.PopulateFromQueueAsync(populateGridProgress);
 
-                    await Task.WhenAll(discoverFiles, populateGrid).ConfigureAwait(false);
+                    await Task.WhenAll(discoverFiles, populateGrid);
 
                 }
 
@@ -60,24 +67,23 @@ namespace DirectoryListViewer
         /// This action is called by the progress bar
         /// </summary>
         /// <param name="value"></param>
-        void PopulateGridProgress(List<IFileDetails> filesBuffer)
+        void PopulateGridProgress(IFileDetails value)
         {
 
-            Debug.WriteLine(@"Populating grid with file buffer data; {0}", filesBuffer.Count);
 
 
-            foreach (FileDetails fileItem in filesBuffer)
-            {
 
                 DataGridViewRow row = new DataGridViewRow();
                 row.CreateCells(gridFiles);
-                row.Cells[0].Value = fileItem.Sequence;
-                row.Cells[1].Value = fileItem.FileName;
-                row.Cells[2].Value = fileItem.FilePath;
-                row.Cells[3].Value = string.Format(@"{0:#,##0}", fileItem.FileSize);
-                row.Cells[4].Value = string.Format(@"{0:f}", fileItem.DateLastTouched);
+            row.Cells[0].Value = value.Sequence;
+            row.Cells[1].Value = value.FileName;
+            row.Cells[2].Value = value.FilePath;
+            row.Cells[3].Value = string.Format(@"{0:#,##0}", value.FileSize);
+            row.Cells[4].Value = string.Format(@"{0:f}", value.DateLastTouched);
                 gridFiles.Rows.Add(row);
             }
+        void DiscoverFilesProgress(int value)
+        {
         }
 
 

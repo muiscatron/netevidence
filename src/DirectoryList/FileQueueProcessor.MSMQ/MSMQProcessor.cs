@@ -57,6 +57,8 @@ namespace FileQueueProcessor.MSMQ
         {
             try
             {
+                // Something makes this whole thread abort when the Receive() method returns no data - the exception handler
+                // does not seem to work
                 FileDetails item = (FileDetails)_messageQueue.Receive().Body;
                 return item;
             }

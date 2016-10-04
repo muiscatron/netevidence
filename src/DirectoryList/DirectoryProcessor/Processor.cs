@@ -61,16 +61,13 @@ namespace DirectoryProcessor
                     foreach (FileInfo fi in files)
                     {
                         _fileCount++;
-                        var info = new FileDetails { Sequence = _fileCount, FileName = fi.Name, FilePath = Path.GetDirectoryName(fi.DirectoryName), FileSize = fi.Length, DateLastTouched = fi.LastAccessTime };
-                        Debug.WriteLine("Pushing item to queue {0}; {1}", info.Sequence, info.FileName);
-                        _fileQueueProcessor.Push(info);
 
                         if (progress != null)
                         {
-                            if (_fileCount % _config.PushBatchSize == 0)
-                            {
+                            var info = new FileDetails { Sequence = _fileCount, FileName = fi.Name, FilePath = Path.GetDirectoryName(fi.DirectoryName) , FileSize = fi.Length, DateLastTouched = fi.LastAccessTime };
                                 progress.Report(_fileCount);
-                            }
+                            _fileQueueProcessor.Push(info);
+
                         }
                     }
 
@@ -90,48 +87,40 @@ namespace DirectoryProcessor
         }
 
 
-        public async Task PopulateFromQueueAsync(IProgress<List<IFileDetails>> progress)
+        public async Task PopulateFromQueueAsync(IProgress<IFileDetails> progress)
         {
             // Run forever, pulling from the queue
             await Task.Run(() =>
             {
-                var buffer = new List<IFileDetails>();
+
                 DateTime lastFileReceived = DateTime.Now;
+
 
                 while (true)
                 {
                     var info = _fileQueueProcessor.Pull();
+
                     if (info != null)
                     {
                         lastFileReceived = DateTime.Now;
                         var fileDetails = new FileDetails() { Sequence = info.Sequence, FileName = info.FileName, FilePath = info.FilePath, FileSize = info.FileSize, DateLastTouched = info.DateLastTouched };
 
-                        if (buffer.Count < _config.PullBatchSize)
-                        {
-                            buffer.Add(fileDetails);
-                        }
-                        else
-                        {
-                            progress.Report(buffer);
-                            buffer = new List<IFileDetails>();
-                        }
+                        progress.Report(fileDetails);
 
-                        Debug.WriteLine("Passing back progress item {0}; {1}", info.Sequence, info.FileName);
                     }
+
                     else
                     {
-                        if (DateTime.Now >  lastFileReceived.AddSeconds(_config.IdleTimeout))
+                        
+                        if (DateTime.Now > lastFileReceived.AddSeconds(_config.IdleTimeout))
                         {
                             break;
                         }
+                        
+
                     }
                 }
                 
-                if (buffer.Count > 0)
-                {
-                    progress.Report(buffer);
-                    buffer = new List<IFileDetails>();
-                }
 
                 // ReSharper disable once FunctionNeverReturns
             }
