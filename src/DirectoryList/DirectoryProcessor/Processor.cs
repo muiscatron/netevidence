@@ -14,16 +14,18 @@ namespace DirectoryProcessor
         private IConfig _config;
 
         private readonly IFileQueueProcessor _fileQueueProcessor;
+        private readonly IDirectoryInfoWrapper _directoryInfoWrapper;
 
-        public Processor(IFileQueueProcessor fileQueueProcessor, IConfig config)
+        public Processor(IFileQueueProcessor fileQueueProcessor, IConfig config, IDirectoryInfoWrapper directoryInfoWrapper)
         {
             _fileQueueProcessor = fileQueueProcessor;
             _config = config;
+            _directoryInfoWrapper = directoryInfoWrapper;
         }
 
         public async Task ProcessDirectoryAsync(string path, IProgress<int> progress)
         {
-            var root = new DirectoryInfo(path);
+            var root = _directoryInfoWrapper.GetDirectoryInfo(path);
 
             await Task.Run(() =>
                 {
@@ -42,7 +44,7 @@ namespace DirectoryProcessor
 
                 try
                 {
-                    files = root.GetFiles("*.*");
+                    files = _directoryInfoWrapper.GetFiles(root);
                 }
                 catch (UnauthorizedAccessException ex)
                 {
@@ -68,7 +70,7 @@ namespace DirectoryProcessor
                         }
                     }
 
-                    var subDirs = root.GetDirectories();
+                    var subDirs = _directoryInfoWrapper.GetDirectories(root);
 
                     foreach (var dirInfo in subDirs)
                     {

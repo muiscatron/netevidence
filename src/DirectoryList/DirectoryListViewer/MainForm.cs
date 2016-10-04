@@ -39,7 +39,7 @@ namespace DirectoryListViewer
                         c.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
                     }
 
-                    var processor = new Processor(new MsmqProcessor(config), config);
+                    var processor = new Processor(new MsmqProcessor(config), config, new DirectoryInfoWrapper());
 
                     var discoverFilesProgress = new Progress<int>(DiscoverFilesProgress);
 

@@ -42,8 +42,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppConfig.cs" />
+    <Compile Include="DirectoryInfoWrapper.cs" />
     <Compile Include="FileDetails.cs" />
     <Compile Include="IConfig.cs" />
+    <Compile Include="IDirectoryInfoWrapper.cs" />
     <Compile Include="IFileDetails.cs" />
     <Compile Include="IFileQueueProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
